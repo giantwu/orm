@@ -13,22 +13,24 @@ class Table extends \EasySwoole\DDL\Blueprint\Table
     /**
      * 注入自定义的column
      * addColumn
-     * @param \EasySwoole\DDL\Blueprint\Column $column
+     * @param \EasySwoole\DDL\Blueprint\Create\Column $column
      * @author Tioncico
      * Time: 15:01
      */
-    function addColumn(\EasySwoole\DDL\Blueprint\Column $column){
+    function addColumn(\EasySwoole\DDL\Blueprint\Create\Column $column): \EasySwoole\DDL\Blueprint\Create\Table
+    {
         $this->columns[$column->getColumnName()] = $column;
+        return $this;
     }
 
     /**
      * 返回自定义的Column
      * 以便扩展该类的处理方法
      * @param string $columnName
-     * @param string $columnType
-     * @return \EasySwoole\DDL\Blueprint\Column|Column
+     * @param \EasySwoole\DDL\Enum\DataType $columnType
+     * @return Column
      */
-    function createColumn(string $columnName, string $columnType)
+    protected function createColumn(string $columnName, \EasySwoole\DDL\Enum\DataType $columnType)
     {
         return new Column($columnName, $columnType);
     }
@@ -39,11 +41,11 @@ class Table extends \EasySwoole\DDL\Blueprint\Table
      * @param string|null $indexName
      * @param $indexType
      * @param $indexColumns
-     * @return \EasySwoole\DDL\Blueprint\Index
+     * @return Index
      */
-    function createIndex(?string $indexName, $indexType, $indexColumns)
+    protected function createIndex(?string $indexName, $indexType, $indexColumns)
     {
-        return parent::createIndex($indexName, $indexType, $indexColumns);
+        return new Index($indexName, $indexType, $indexColumns);
     }
 
     /**
@@ -70,7 +72,7 @@ class Table extends \EasySwoole\DDL\Blueprint\Table
      */
     public function getEngine(): string
     {
-        return $this->engine;
+        return $this->engine instanceof \BackedEnum ? $this->engine->value : (string)$this->engine;
     }
 
     /**
@@ -79,7 +81,7 @@ class Table extends \EasySwoole\DDL\Blueprint\Table
      */
     public function getCharset(): string
     {
-        return $this->charset;
+        return $this->charset instanceof \BackedEnum ? $this->charset->value : (string)$this->charset;
     }
 
     /**
@@ -136,7 +138,7 @@ class Table extends \EasySwoole\DDL\Blueprint\Table
         // 首先查找是否有PrimaryKey索引
         $return = [];
         foreach ($this->indexes as $indexName => $index) {
-            if ($index instanceof Index && $index->getIndexType() === \EasySwoole\DDL\Enum\Index::PRIMARY) {
+            if ($index instanceof Index && $index->getIndexType() === \EasySwoole\DDL\Enum\Index::PRIMARY->value) {
                 $return[] =  $index->getIndexName();
             }
         }

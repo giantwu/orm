@@ -2,13 +2,32 @@
 
 namespace EasySwoole\ORM\Utility\Schema;
 
+use EasySwoole\DDL\Enum\DataType;
+use InvalidArgumentException;
+
 /**
  * 字段结构
  * Class Column
  * @package EasySwoole\ORM\Utility\Schema
  */
-class Column extends \EasySwoole\DDL\Blueprint\Column
+class Column extends \EasySwoole\DDL\Blueprint\Create\Column
 {
+    /**
+     * @param string $columnName
+     * @param string|DataType $columnType
+     */
+    public function __construct(string $columnName, $columnType)
+    {
+        if (is_string($columnType)) {
+            $typeName = strtolower($columnType);
+            $columnType = DataType::tryFrom($typeName);
+            if ($columnType === null) {
+                throw new InvalidArgumentException("Unsupported column type: {$typeName}");
+            }
+        }
+        parent::__construct($columnName, $columnType);
+    }
+
     /**
      * ColumnName Getter
      * @return mixed
@@ -20,11 +39,11 @@ class Column extends \EasySwoole\DDL\Blueprint\Column
 
     /**
      * ColumnType Getter
-     * @return mixed
+     * @return string
      */
     public function getColumnType()
     {
-        return $this->columnType;
+        return parent::getColumnType();
     }
 
     /**

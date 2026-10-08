@@ -8,6 +8,11 @@ use EasySwoole\Mysqli\QueryBuilder;
 
 interface ClientInterface
 {
-    public function query(QueryBuilder $builder,bool $rawQuery = false): Result;
+    /**
+     * @param QueryBuilder $builder
+     * @param bool $rawQuery
+     * @return Result
+     */
+    public function query(QueryBuilder $builder, $rawQuery = false): Result;
     public function connectionName(?string $name = null):?string;
 }
