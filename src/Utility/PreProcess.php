@@ -16,12 +16,16 @@ class PreProcess
     {
         // 处理查询条件
         $primaryKey = $model->schemaInfo()->getPkFiledName();
-        if (is_int($whereVal) || is_string($whereVal)) {
+        if (is_int($whereVal)) {
             if (empty($primaryKey)) {
                 throw new Exception('Table not have primary key, so can\'t use Model::get($pk)');
             } else {
                 $builder->where($primaryKey, $whereVal);
             }
+        } else if (is_string($whereVal)) {
+            // 兼容逗号分隔主键列表 → IN（业务侧人工补丁）
+            $whereKeys = explode(',', $whereVal);
+            $builder->where($primaryKey, $whereKeys, 'IN');
         } else if (is_array($whereVal)) {
             // 如果不相等说明是一个键值数组 需要批量操作where
             if (array_keys($whereVal) !== range(0, count($whereVal) - 1)) {
