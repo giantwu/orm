@@ -94,12 +94,12 @@ trait Attribute
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->__isset($offset);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->getAttr($offset);
     }
@@ -107,30 +107,28 @@ trait Attribute
     /**
      * @param mixed $offset
      * @param mixed $value
-     * @return bool
      * @throws Exception
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
-        return $this->setAttr($offset, $value);
+        $this->setAttr($offset, $value);
     }
 
 
     /**
      * @param mixed $offset
-     * @return bool
      * @throws Exception
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
-        return $this->setAttr($offset, null);
+        $this->setAttr($offset, null);
     }
 
     /**
      * json序列化方法
      * @return array|mixed
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray(false, false);
     }
